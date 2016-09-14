@@ -1,18 +1,65 @@
-// server.js
-// where your node app starts
-
 // init project
 var express = require('express');
+var request = require('request');
+var parseString = require('xml2js').parseString;
 var app = express();
 
-// we've started you off with Express, 
-// but feel free to use whatever libs or frameworks you'd like through `package.json`.
 
-// http://expressjs.com/en/starter/static-files.html
+
 app.use(express.static('public'));
 
+
+
+app.get("/", function (req, res) {
+  var URI = 'http://www.handelsblatt.com/contentexport/feed/eilmeldung';
+  request(URI, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      parseString(body, function (err, result) {
+        delete result.rss.$;
+        delete result.rss.channel;
+        res.send(JSON.stringify(result, undefined, 4));
+      });
+    } else {
+      res.send({status: -1, error: 'Feed not fetchable'});    
+    }
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // http://expressjs.com/en/starter/basic-routing.html
-app.get("/", function (request, response) {
+app.get("/index", function (request, response) {
   response.sendFile(__dirname + '/views/index.html');
 });
 
