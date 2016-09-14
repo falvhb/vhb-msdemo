@@ -15,9 +15,19 @@ app.get("/", function (req, res) {
   request(URI, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       parseString(body, function (err, result) {
+        var json = {
+          status: -1,
+          description: 'Initializing'
+        };
         delete result.rss.$;
-        delete result.rss.channel;
-        res.send(JSON.stringify(result, undefined, 4));
+
+        if (result.rss.channel.length && result.rss.channel[0].item && result.rss.channel[0].item.length){
+          json.status= 0;
+          json.description = 'Data fetched successfully';
+          json.data = result.rss.channel[0].item;
+        }
+        
+        res.send(JSON.stringify(json, undefined, 4));
       });
     } else {
       res.send({status: -1, error: 'Feed not fetchable'});    
