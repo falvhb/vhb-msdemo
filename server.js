@@ -25,6 +25,8 @@ app.get("/", function (req, res) {
           json.status= 0;
           json.description = 'Data fetched successfully';
           json.data = result.rss.channel[0].item;
+        } else {
+          json.description = 'No data available';
         }
         
         res.send(JSON.stringify(json, undefined, 4));
